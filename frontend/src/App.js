@@ -9,7 +9,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { getProtectedData } from "./apiClient";
 
 function App() {
@@ -18,42 +17,34 @@ function App() {
 
   useEffect(() => {
     // Make request to protected route on load to validate auth
-
     const checkAuth = async () => {
       try {
-        const csrfToken = getCookie("csrf_token");
-        const res = await axios.get("http://localhost:5000/api/protected", {
-          withCredentials: true,
-          headers: {
-            "X-CSRF-TOKEN": csrfToken,
-          },
-        });
-        if (res.data.message) {
-          if (res.data.role === "admin") {
-            setIsAdmin(true);
-          } else {
-            setIsAdmin(false);
-          }
+        // Use getProtectedData from apiClient (has interceptors and correct endpoint)
+        const result = await getProtectedData();
+
+        if (result.success && result.data) {
+          // Check role (case-insensitive comparison)
+          const role = result.data.role?.toLowerCase();
+          setIsAdmin(role === 'admin' || role === 'super_admin');
           setIsAuthenticated(true);
         } else {
+          // Only logout on actual auth failure
           setIsAuthenticated(false);
           setIsAdmin(false);
         }
       } catch (error) {
-        setIsAuthenticated(false);
-        setIsAdmin(false);
+        console.error('Auth check failed:', error);
+        // Only logout on 401 (unauthorized), not on network errors
+        if (error.response?.status === 401) {
+          setIsAuthenticated(false);
+          setIsAdmin(false);
+        }
+        // For network errors, keep user state unchanged
       }
     };
 
     checkAuth();
   }, []);
-
-  function getCookie(name) {
-    const match = document.cookie.match(
-      new RegExp("(^| )" + name + "=([^;]+)")
-    );
-    return match ? match[2] : null;
-  }
 
   if (isAuthenticated === null) return <div>Loading...</div>;
 

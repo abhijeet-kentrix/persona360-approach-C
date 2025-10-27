@@ -41,8 +41,15 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Only redirect to login if we're not already on login/auth pages
+    // and not during initial auth check
     if (error.response?.status === 401) {
-      window.location.href = "/login";
+      const currentPath = window.location.pathname;
+      // Don't redirect if already on login or if it's the protected route check
+      if (!currentPath.includes('/login') && !currentPath.includes('/admin') &&
+          !error.config.url.includes('/auth/protected')) {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }
@@ -206,7 +213,7 @@ export const buildAudience = async (filterData) => {
 
 export const getProtectedData = async () => {
   try {
-    const response = await apiClient.get("/protected");
+    const response = await apiClient.get("/auth/protected");
     return {
       success: true,
       data: response.data,
