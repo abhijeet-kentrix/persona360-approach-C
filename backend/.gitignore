@@ -1,0 +1,10 @@
+__pycache__
+doc
+.idea
+common/__pycache__
+working_file/**
+uploads/**
+venv
+.env
+data_dictionary
+user_database.db

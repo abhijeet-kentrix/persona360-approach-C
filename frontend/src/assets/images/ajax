@@ -1,0 +1,64 @@
+
+
+  
+  
+  
+  
+
+    
+
+
+
+
+
+  
+        
+        
+                                                     
+
+    {
+        "ASIN" : "B0DFHC52RH",
+        "Type" : "JSON",
+        "sortOfferInfo" : "",
+        "isPrimeEligible" : "false",
+        "Value" :
+        {
+            "content" :
+            {"twisterSlotJson":{"isAvailable":true,"price":1399},"twisterSlotDiv":"<div data-csa-c-type=\"widget\" data-csa-c-slot-id=\"apex_dp_twister\" data-csa-c-content-id=\"apex\" >\n             <div data-csa-c-type=\"widget\" data-csa-c-slot-id=\"apex_dp_twister\" data-csa-c-content-id=\"apex_with_rio_cx\" >\n\t\t\t\t <div id=\"apex_price\" class=\"a-section a-spacing-small apex_on_twister_price a-text-left\">                                                                                                                                             <style>\n\t\t/* Temporary CSS overrides for savings. Sim: https://sim.amazon.com/issues/DPOffersDev-11797 */\n\t\t.centralizedApexPriceSavingsOverrides {\n\t\t\tcolor: #CC0C39!important;\n\t\t\tfont-weight: 300!important;\n\t\t}\n\t<\/style>\n\t  <style>\n\t\t\t\t.centralizedApexPriceSavingsPercentageMargin,\n\t\t\t\t.centralizedApexPricePriceToPayMargin {\n\t\t\t\t\tmargin-right: 4px;\n\t\t\t\t}\n\t\t\t<\/style>   <div class=\"a-section a-spacing-none aok-align-center aok-relative\">       <span class=\"aok-offscreen\"> \u20b91,399.00 with 12 percent savings <\/span>             <span class=\"a-price aok-align-center centralizedApexPricePriceToPayMargin\" data-a-size=\"medium_plus\" data-a-color=\"base\"><span class=\"a-offscreen\"> <\/span><span aria-hidden=\"true\"><span class=\"a-price-symbol\">\u20b9<\/span><span class=\"a-price-whole\">1,399<span class=\"a-price-decimal\">.<\/span><\/span><span class=\"a-price-fraction\">00<\/span><\/span><\/span>            <\/div>     <div class=\"a-section a-spacing-small aok-align-center centralizedApexBasisPriceCSS\"> <span>        <span class=\"a-price a-text-price\" data-a-size=\"mini\" data-a-strike=\"true\" data-a-color=\"secondary\"><span class=\"a-offscreen\">\u20b91,590.00<\/span><span aria-hidden=\"true\">\u20b91,590.00<\/span><\/span>       <\/span> <\/div>          <\/div> <\/div>\n\t\t\t      <\/div>\n                         <div>\n    <span id=\"twisterAvailability\" class=\"a-size-small a-color-success\"> In stock <\/span> <\/div>"}
+
+        }
+    }
+        
+        &&&
+                                
+
+    {
+        "ASIN" : "B0DFH8Q3R3",
+        "Type" : "JSON",
+        "sortOfferInfo" : "",
+        "isPrimeEligible" : "false",
+        "Value" :
+        {
+            "content" :
+            {"twisterSlotJson":{"isAvailable":true,"price":1682},"twisterSlotDiv":"<div data-csa-c-type=\"widget\" data-csa-c-slot-id=\"apex_dp_twister\" data-csa-c-content-id=\"apex\" >\n             <div data-csa-c-type=\"widget\" data-csa-c-slot-id=\"apex_dp_twister\" data-csa-c-content-id=\"apex_with_rio_cx\" >\n\t\t\t\t <div id=\"apex_price\" class=\"a-section a-spacing-small apex_on_twister_price a-text-left\">                                                                                                                                             <style>\n\t\t/* Temporary CSS overrides for savings. Sim: https://sim.amazon.com/issues/DPOffersDev-11797 */\n\t\t.centralizedApexPriceSavingsOverrides {\n\t\t\tcolor: #CC0C39!important;\n\t\t\tfont-weight: 300!important;\n\t\t}\n\t<\/style>\n\t  <style>\n\t\t\t\t.centralizedApexPriceSavingsPercentageMargin,\n\t\t\t\t.centralizedApexPricePriceToPayMargin {\n\t\t\t\t\tmargin-right: 4px;\n\t\t\t\t}\n\t\t\t<\/style>   <div class=\"a-section a-spacing-none aok-align-center aok-relative\">       <span class=\"aok-offscreen\"> \u20b91,682.00 with 11 percent savings <\/span>             <span class=\"a-price aok-align-center centralizedApexPricePriceToPayMargin\" data-a-size=\"medium_plus\" data-a-color=\"base\"><span class=\"a-offscreen\"> <\/span><span aria-hidden=\"true\"><span class=\"a-price-symbol\">\u20b9<\/span><span class=\"a-price-whole\">1,682<span class=\"a-price-decimal\">.<\/span><\/span><span class=\"a-price-fraction\">00<\/span><\/span><\/span>            <\/div>     <div class=\"a-section a-spacing-small aok-align-center centralizedApexBasisPriceCSS\"> <span>        <span class=\"a-price a-text-price\" data-a-size=\"mini\" data-a-strike=\"true\" data-a-color=\"secondary\"><span class=\"a-offscreen\">\u20b91,890.00<\/span><span aria-hidden=\"true\">\u20b91,890.00<\/span><\/span>       <\/span> <\/div>          <\/div> <\/div>\n\t\t\t      <\/div>\n                         <div>\n    <span id=\"twisterAvailability\" class=\"a-size-small a-color-success\"> In stock <\/span> <\/div>"}
+
+        }
+    }
+        
+        &&&
+                                
+
+    {
+        "ASIN" : "B0DFH8R3JG",
+        "Type" : "JSON",
+        "sortOfferInfo" : "",
+        "isPrimeEligible" : "false",
+        "Value" :
+        {
+            "content" :
+            {"twisterSlotJson":{"isAvailable":true,"price":1927},"twisterSlotDiv":"<div data-csa-c-type=\"widget\" data-csa-c-slot-id=\"apex_dp_twister\" data-csa-c-content-id=\"apex\" >\n             <div data-csa-c-type=\"widget\" data-csa-c-slot-id=\"apex_dp_twister\" data-csa-c-content-id=\"apex_with_rio_cx\" >\n\t\t\t\t <div id=\"apex_price\" class=\"a-section a-spacing-small apex_on_twister_price a-text-left\">                                                                                                                                             <style>\n\t\t/* Temporary CSS overrides for savings. Sim: https://sim.amazon.com/issues/DPOffersDev-11797 */\n\t\t.centralizedApexPriceSavingsOverrides {\n\t\t\tcolor: #CC0C39!important;\n\t\t\tfont-weight: 300!important;\n\t\t}\n\t<\/style>\n\t  <style>\n\t\t\t\t.centralizedApexPriceSavingsPercentageMargin,\n\t\t\t\t.centralizedApexPricePriceToPayMargin {\n\t\t\t\t\tmargin-right: 4px;\n\t\t\t\t}\n\t\t\t<\/style>   <div class=\"a-section a-spacing-none aok-align-center aok-relative\">       <span class=\"aok-offscreen\"> \u20b91,927.00 with 12 percent savings <\/span>             <span class=\"a-price aok-align-center centralizedApexPricePriceToPayMargin\" data-a-size=\"medium_plus\" data-a-color=\"base\"><span class=\"a-offscreen\"> <\/span><span aria-hidden=\"true\"><span class=\"a-price-symbol\">\u20b9<\/span><span class=\"a-price-whole\">1,927<span class=\"a-price-decimal\">.<\/span><\/span><span class=\"a-price-fraction\">00<\/span><\/span><\/span>            <\/div>     <div class=\"a-section a-spacing-small aok-align-center centralizedApexBasisPriceCSS\"> <span>        <span class=\"a-price a-text-price\" data-a-size=\"mini\" data-a-strike=\"true\" data-a-color=\"secondary\"><span class=\"a-offscreen\">\u20b92,190.00<\/span><span aria-hidden=\"true\">\u20b92,190.00<\/span><\/span>       <\/span> <\/div>          <\/div> <\/div>\n\t\t\t      <\/div>\n                         <div>\n    <span id=\"twisterAvailability\" class=\"a-size-small a-color-success\"> In stock <\/span> <\/div>"}
+
+        }
+    }
+           
+            

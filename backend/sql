@@ -1,0 +1,40 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    company_id SERIAL UNIQUE NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    status BOOLEAN NOT NULL,
+    created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by_id INTEGER NOT NULL
+);
+
+INSERT INTO users (first_name, last_name, company_name, username, password, role, status, created_by_id) VALUES
+('John', 'Doe', 'TechCorp Inc', 'john.doe', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'super_admin', true, 1),
+('Jane', 'Smith', 'DataSoft Solutions', 'jane.smith', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'admin', true, 1),
+('Michael', 'Johnson', 'CloudTech Systems', 'mike.johnson', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'user', true, 1),
+('Emily', 'Davis', 'InnovateLabs', 'emily.davis', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'user', true, 2),
+('Robert', 'Wilson', 'SecureNet Corp', 'robert.wilson', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'admin', true, 1),
+('Sarah', 'Brown', 'DigitalFlow Inc', 'sarah.brown', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'user', false, 2),
+('David', 'Miller', 'WebSolutions Ltd', 'david.miller', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'user', true, 1),
+('Lisa', 'Anderson', 'AppDev Studios', 'lisa.anderson', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'admin', true, 1),
+('James', 'Taylor', 'CodeCraft Agency', 'james.taylor', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'user', true, 2),
+('Jennifer', 'White', 'TechStart Ventures', 'jennifer.white', '$2b$12$LQv3c1yqBwVHdkgK/3HLOuHGwJ8.Jf5vJz5vJz5vJz5vJz5vJz5vJO', 'user', false, 1);
+
+
+
+select * from users
+
+CREATE TABLE presets (
+    preset_id SERIAL PRIMARY KEY,
+    company_name VARCHAR(100) NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    preset_name VARCHAR(100) NOT NULL,
+    preset_filter_json JSONB NOT NULL, -- Using JSONB for better performance
+    created_by_id INTEGER,
+    created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
