@@ -8,3 +8,4 @@ venv
 .env
 data_dictionary
 user_database.db
+data

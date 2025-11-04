@@ -1,5 +1,7 @@
 import datetime
 from typing import Dict, List, Set, Any
+import pandas as pd
+import os
 complete_custom_audience_files = {
     "income_lifestyle_group": [
         '1.1',
@@ -197,6 +199,79 @@ complete_custom_audience_files = {
     ]
 }
 
+
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CSV_PATH = os.path.join(BASE_DIR, 'backend\\data', 'for_dashboard.csv')
+
+# Load dataframe globally
+try:
+    df = pd.read_csv(CSV_PATH)
+    df['maid_count']=df['maid_count'].astype(int)
+    print(f"Successfully loaded CSV with {len(df)} rows")
+except Exception as e:
+    print(f"Error loading CSV: {str(e)}")
+    df = None
+
+def calculate_maid_count(audience_filters):
+    """
+    Calculate total maid_count based on audience filters
+    
+    Args:
+        df: pandas DataFrame with renamed columns
+        audience_filters: dict containing filter criteria
+    
+    Returns:
+        int: sum of maid_count after applying all filters
+    """
+    # Create a copy of the dataframe to apply filters
+    filtered_df = df.copy()
+
+    # Columns that use numeric values (isin filter)
+    numeric_filter_columns = ['income', 'lifestyle', 'health_care', 'credit_card', 'real_estate', 
+                              'laundry', 'personal_wash', 'packaged_food', 'cosmetics', 'fashion',
+                              'jewellery_gold', 'jewellery_diamond', 'travel_spend', 'travel_destination',
+                              'online_retail', 'TV', 'Smartphone', 'Refrigerator', 'WashingMachine', 'AirConditioner']
+
+    # Columns that use binary values (== 1 filter)
+    binary_filter_columns = ['insurance', 'banking_product', 'automobile', 'two_wheeler']
+
+    # Apply filters
+    for filter_key, filter_values in audience_filters.items():
+        if not filter_values:  # Skip empty filters
+            continue
+        
+        # Handle numeric filters
+        if filter_key in numeric_filter_columns:
+            numeric_values = [int(v) for v in filter_values]
+            print(numeric_values)
+            print(filtered_df[filter_key].unique())
+            filtered_df = filtered_df[filtered_df[filter_key].isin(numeric_values)]
+            print(filtered_df.shape)
+        
+        # Handle binary filters (insurance, banking_product, automobile, two_wheeler)
+        elif filter_key in binary_filter_columns:
+            print("ornot")
+            conditions = []
+            for value in filter_values:
+                column_name = value  # The value itself is the column name now
+                if column_name in filtered_df.columns:
+                    conditions.append(filtered_df[column_name] == 1)
+            
+            if conditions:
+                combined_condition = conditions[0]
+                for condition in conditions[1:]:
+                    combined_condition = combined_condition | condition
+                filtered_df = filtered_df[combined_condition]
+
+    # Calculate sum of maid_count
+    print(filtered_df)
+    total_maid_count = int(filtered_df['maid_count'].sum())
+    
+    return total_maid_count
+
+
 def build_audience_segments(
         complete_audience_filter: Dict[str, List[str]],
         current_username: str = "system"
@@ -347,10 +422,15 @@ def build_audience_segments(
     inclusion_segments = list(dict.fromkeys(inclusion_segments))
     exclusion_segments = list(dict.fromkeys(exclusion_segments))
 
+    # Calculate maid_count
+    total_maid_count = calculate_maid_count(complete_audience_filter)
+    print("total_maid_count",total_maid_count)
+
     # Build response
     response_data = {
         'inclusionSegments': inclusion_segments,
         'exclusionSegments': exclusion_segments,
+        'audienceCount': total_maid_count,
         'metadata': {
             'total_inclusion': len(inclusion_segments),
             'total_exclusion': len(exclusion_segments),

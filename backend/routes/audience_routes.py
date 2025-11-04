@@ -5,7 +5,6 @@ from InclusionExclusionLogic import build_audience_segments
 
 audience_bp = Blueprint('audience', __name__, url_prefix='/api')
 
-
 @audience_bp.route('/build-audience', methods=['POST'])
 @token_required
 def build_audience(current_user_id, current_username, current_role, company_name):
@@ -33,7 +32,7 @@ def build_audience(current_user_id, current_username, current_role, company_name
         print(f"Filters received: {json.dumps(audience_filters, indent=2)}")
 
         # Build audience segments using the logic module
-        response_data = build_audience_segments(audience_filters, current_username)
+        response_data = build_audience_segments(audience_filters,current_username)
 
         print(f"Built audience: {json.dumps(response_data, indent=2)}")
 

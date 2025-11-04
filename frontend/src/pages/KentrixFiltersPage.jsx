@@ -1059,7 +1059,7 @@ const KentrixFiltersPage = ({
                   >
                     <div id="travel_spend" className="accordion-body">
                       {travelShortFilters.map((filter, index) => {
-                        const valueMap = ["basic", "luxury"];
+                        const valueMap = ["1","2"];
                         return (
                           <li key={filter.ID} className="product_filters">
                             <label
@@ -1116,9 +1116,10 @@ const KentrixFiltersPage = ({
                     <div id="travel_destination" className="accordion-body">
                       {travelLongFilters.map((filter, index) => {
                         const valueMap = [
-                          "national",
-                          "international",
-                          "travel_destination_special",
+                          "1",
+                          // "national",
+                          // "international",
+                          // "travel_destination_special",
                         ];
                         return (
                           <li key={filter.ID} className="product_filters">
@@ -1199,7 +1200,7 @@ const KentrixFiltersPage = ({
                   >
                     <div id="retail" className="accordion-body">
                       {onlineRetailFilters.map((filter, index) => {
-                        const valueMap = ["rare", "moderate", "heavy"];
+                        const valueMap = ["1", "2", "3"];
                         return (
                           <li key={filter.ID} className="product_filters solo">
                             <label
@@ -1453,7 +1454,7 @@ const KentrixFiltersPage = ({
                   >
                     <div id="jewellery_gold" className="accordion-body">
                       {jewelleryGoldFilters.map((filter, index) => {
-                        const valueMap = ["moderately_priced", "high_priced"];
+                        const valueMap = ["1","2"];
                         return (
                           <li key={filter.ID} className="product_filters">
                             <label
@@ -1509,7 +1510,7 @@ const KentrixFiltersPage = ({
                   >
                     <div id="jewellery_diamond" className="accordion-body">
                       {jewelleryDiamondFilters.map((filter, index) => {
-                        const valueMap = ["moderately_priced", "high_priced"];
+                        const valueMap = ["1","2"];
                         return (
                           <li key={filter.ID} className="product_filters">
                             <label
@@ -1596,7 +1597,7 @@ const KentrixFiltersPage = ({
                   >
                     <div id="tv" className="accordion-body">
                       {electronicsTVFilters.map((filter, index) => {
-                        const valueMap = ["premium", "popular"];
+                        const valueMap = ["1","2"];
                         return (
                           <li key={filter.ID} className="product_filters">
                             <label
@@ -1650,7 +1651,7 @@ const KentrixFiltersPage = ({
                   >
                     <div id="smartphone" className="accordion-body">
                       {electronicsSmartphoneFilters.map((filter, index) => {
-                        const valueMap = ["premium", "popular"];
+                        const valueMap = ["1","2"];
                         return (
                           <li key={filter.ID} className="product_filters">
                             <label
@@ -1704,7 +1705,7 @@ const KentrixFiltersPage = ({
                   >
                     <div id="refrigerator" className="accordion-body">
                       {electronicsRefrigeratorFilters.map((filter, index) => {
-                        const valueMap = ["premium", "popular"];
+                        const valueMap = ["1","2"];
                         return (
                           <li key={filter.ID} className="product_filters">
                             <label
@@ -1760,7 +1761,7 @@ const KentrixFiltersPage = ({
                   >
                     <div id="washing_machine" className="accordion-body">
                       {electronicsWashingMachineFilters.map((filter, index) => {
-                        const valueMap = ["premium", "popular"];
+                        const valueMap = ["1","2"];
                         return (
                           <li key={filter.ID} className="product_filters">
                             <label
@@ -1816,7 +1817,7 @@ const KentrixFiltersPage = ({
                   >
                     <div id="air_conditioner" className="accordion-body">
                       {electronicsAirConditionerFilters.map((filter, index) => {
-                        const valueMap = ["premium", "popular"];
+                        const valueMap = ["1","2"];
                         return (
                           <li key={filter.ID} className="product_filters">
                             <label

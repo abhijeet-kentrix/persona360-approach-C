@@ -52,13 +52,14 @@ const SegmentCard = ({ segments, onRemove }) => (
 );
 
 export default function Home({ setLoginUser, setIsAuthenticated }) {
-  const [presetsList, setPresetsList] = useState([]); // Lightweight list for dropdown
+  const [presetsList, setPresetsList] = useState([]);
   const [selectedPreset, setSelectedPreset] = useState("");
   const [selectedPresetId, setSelectedPresetId] = useState(null);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [presetName, setPresetName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [audienceCount, setAudienceCount] = useState(null);
 
   const [inclusionSegments, setInclusionSegments] = useState([]);
   const [exclusionSegments, setExclusionSegments] = useState([]);
@@ -102,7 +103,7 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
     setTimeout(() => setMessage({ text: "", type: "" }), 3000);
   };
 
-  // Fetch lightweight preset list (only IDs and names)
+  // Fetch lightweight preset list
   const fetchPresetsList = useCallback(async () => {
     try {
       const res = await getPresetsList();
@@ -157,10 +158,10 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
         laundry_washing_machine,
         travel_destination_special,
         TV, 
-Smartphone, 
-Refrigerator,
-WashingMachine,
-AirConditioner,
+        Smartphone, 
+        Refrigerator,
+        WashingMachine,
+        AirConditioner,
       },
       segments: {
         inclusionSegments,
@@ -235,7 +236,7 @@ AirConditioner,
       const res = await createPreset(payload);
 
       if (res.success) {
-        await fetchPresetsList(); // Refresh the list
+        await fetchPresetsList();
         setPresetName("");
         setShowSaveDialog(false);
         showMessage("Preset saved successfully!", "success");
@@ -268,7 +269,6 @@ AirConditioner,
         const presetData = res.data.preset;
         setSelectedPresetId(presetId);
         
-        // Apply the preset_filter_json
         if (presetData.preset_filter_json) {
           applyFiltersFromJSON(presetData.preset_filter_json);
           showMessage(`Loaded preset: ${presetName}`, "success");
@@ -303,7 +303,7 @@ AirConditioner,
       const res = await updatePreset(selectedPresetId, payload);
 
       if (res.success) {
-        await fetchPresetsList(); // Refresh the list
+        await fetchPresetsList();
         showMessage("Preset updated successfully!", "success");
       } else {
         showMessage(res.error || "Failed to update preset", "error");
@@ -326,7 +326,7 @@ AirConditioner,
         const res = await deletePreset(presetId);
 
         if (res.success) {
-          await fetchPresetsList(); // Refresh the list
+          await fetchPresetsList();
           if (selectedPresetId === presetId) {
             setSelectedPreset("");
             setSelectedPresetId(null);
@@ -353,9 +353,10 @@ AirConditioner,
       const res = await buildAudience(payload);
 
       if (res.success) {
-        const { inclusionSegments, exclusionSegments } = res.data;
+        const { inclusionSegments, exclusionSegments, audienceCount } = res.data;
         setInclusionSegments(inclusionSegments || []);
         setExclusionSegments(exclusionSegments || []);
+        setAudienceCount(audienceCount || 0);
         showMessage("Audience built successfully!", "success");
       } else {
         showMessage(res.error || "Failed to build audience", "error");
@@ -407,7 +408,6 @@ AirConditioner,
   const handleOnlineRetailChange = (event) => handleMultipleSelection(event, setOnlineRetail);
   const handleRetailChange = (event) => handleMultipleSelection(event, setRetail);
   const handleTwoWheelerChange = (event) => handleMultipleSelection(event, setTwoWheeler);
-
   const handleTVChange = (event) => handleMultipleSelection(event, setTV);
   const handleSmartphoneChange = (event) => handleMultipleSelection(event, setSmartphone);
   const handleRefrigeratorChange = (event) => handleMultipleSelection(event, setRefrigerator);
@@ -473,11 +473,11 @@ AirConditioner,
     two_wheeler,
     laundry_washing_machine,
     travel_destination_special,
-    TV , 
-Smartphone , 
-Refrigerator ,
-WashingMachine ,
-AirConditioner ,
+    TV, 
+    Smartphone, 
+    Refrigerator,
+    WashingMachine,
+    AirConditioner,
   };
 
   return (
@@ -554,14 +554,11 @@ AirConditioner ,
             handleOnlineRetailChange={handleOnlineRetailChange}
             handleRetailChange={handleRetailChange}
             handleTwoWheelerChange={handleTwoWheelerChange}
-
-            handleTVChange ={handleTVChange}
-            handleSmartphoneChange ={handleSmartphoneChange}
-            handleRefrigeratorChange ={handleRefrigeratorChange}
-            handleWashingMachineChange ={handleWashingMachineChange}
-            handleAirConditionerChange ={handleAirConditionerChange}
-
-
+            handleTVChange={handleTVChange}
+            handleSmartphoneChange={handleSmartphoneChange}
+            handleRefrigeratorChange={handleRefrigeratorChange}
+            handleWashingMachineChange={handleWashingMachineChange}
+            handleAirConditionerChange={handleAirConditionerChange}
             formdata={formdata}
           />
         </div>
@@ -924,6 +921,72 @@ AirConditioner ,
             >
               {isLoading ? "Building..." : "Build Your Audience"}
             </button>
+
+            {/* Audience Count Display */}
+            {(
+              <div
+                style={{
+                  marginTop: "1.5rem",
+                  padding: "1.5rem",
+                  backgroundColor: "#f0f9ff",
+                  border: "2px solid #3b82f6",
+                  borderRadius: "8px",
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: "0.75rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "1.5rem",
+                      marginRight: "0.5rem",
+                    }}
+                  >
+                    👥
+                  </div>
+                  <h4
+                    style={{
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#1e40af",
+                      margin: 0,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Total Audience Size
+                  </h4>
+                </div>
+                
+                <div
+                  style={{
+                    fontSize: "2.5rem",
+                    fontWeight: "700",
+                    color: "#1e3a8a",
+                    marginBottom: "0.25rem",
+                    fontFamily: "monospace",
+                  }}
+                >
+                  {new Intl.NumberFormat('en-IN').format(audienceCount)}
+                </div>
+                
+                <p
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "#64748b",
+                    margin: 0,
+                  }}
+                >
+                  Unique users matching your criteria
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
