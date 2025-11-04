@@ -96,6 +96,7 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
   const [Refrigerator, setRefrigerator] = useState([]);
   const [WashingMachine, setWashingMachine] = useState([]);
   const [AirConditioner, setAirConditioner] = useState([]);
+  const [city_name, setCityName] = useState([]);
 
   // Show message with auto-hide
   const showMessage = (text, type = "success") => {
@@ -133,6 +134,7 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
       audienceFilters: {
         income,
         regio_type,
+        city_name,
         lifestyle,
         sec_reference,
         smaller_towns,
@@ -157,8 +159,8 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
         two_wheeler,
         laundry_washing_machine,
         travel_destination_special,
-        TV, 
-        Smartphone, 
+        TV,
+        Smartphone,
         Refrigerator,
         WashingMachine,
         AirConditioner,
@@ -184,6 +186,7 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
     // Set all filter states
     setIncome(filters.income || []);
     setRegionType(filters.regio_type || []);
+    setCityName(filters.city_name || []);
     setLifestyle(filters.lifestyle || []);
     setSecReference(filters.sec_reference || []);
     setSmallerTowns(filters.smaller_towns || []);
@@ -388,6 +391,7 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
 
   const handleIncomeChange = (event) => handleMultipleSelection(event, setIncome);
   const handleRegionTypeChange = (event) => handleMultipleSelection(event, setRegionType);
+  const handleCityNameChange = (event) => handleMultipleSelection(event, setCityName);
   const handleLifestyleChange = (event) => handleMultipleSelection(event, setLifestyle);
   const handleSecReferenceChange = (event) => handleMultipleSelection(event, setSecReference);
   const handleSmallerTownsChange = (event) => handleMultipleSelection(event, setSmallerTowns);
@@ -449,6 +453,7 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
   const formdata = {
     income,
     regio_type,
+    city_name,
     lifestyle,
     sec_reference,
     smaller_towns,
@@ -473,8 +478,8 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
     two_wheeler,
     laundry_washing_machine,
     travel_destination_special,
-    TV, 
-    Smartphone, 
+    TV,
+    Smartphone,
     Refrigerator,
     WashingMachine,
     AirConditioner,
@@ -532,6 +537,7 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
           <KentrixFiltersPage
             handleIncomeChange={handleIncomeChange}
             handleRegionTypeChange={handleRegionTypeChange}
+            handleCityNameChange={handleCityNameChange}
             handleLifestyleChange={handleLifestyleChange}
             handleSecReferenceChange={handleSecReferenceChange}
             handleSmallerTownsChange={handleSmallerTownsChange}

@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { KentrixFiltersDescription } from "../components/KentrixFiltersDescription";
+import { City_Names_Per_RT } from "../components/city_names_data";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const KentrixFiltersPage = ({
   formdata,
   handleRegionTypeChange,
+  handleCityNameChange,
   handleIncomeChange,
   handleLifestyleChange,
   handleSecReferenceChange,
@@ -134,6 +136,29 @@ const KentrixFiltersPage = ({
   const rtFilters = KentrixFiltersDescription.filter(
     (f) => f.Category === "Regio_Type"
   );
+
+  // Get available cities based on selected regio types
+  const availableCities = useMemo(() => {
+    if (!formdata.regio_type || formdata.regio_type.length === 0) {
+      // If no regio type selected, show all cities
+      return Object.values(City_Names_Per_RT).flat();
+    }
+
+    // Get selected regio type names
+    const selectedRegioTypes = formdata.regio_type.map((index) => {
+      const filter = rtFilters[parseInt(index) - 1];
+      return filter?.SubCategory;
+    }).filter(Boolean);
+
+    // Collect cities from selected regio types
+    const cities = selectedRegioTypes.reduce((acc, regioType) => {
+      const citiesForType = City_Names_Per_RT[regioType] || [];
+      return [...acc, ...citiesForType];
+    }, []);
+
+    // Remove duplicates and sort
+    return [...new Set(cities)].sort();
+  }, [formdata.regio_type, rtFilters]);
 
   const incomeFilters = KentrixFiltersDescription.filter(
     (f) => f.Category === "Income"
@@ -271,7 +296,58 @@ const KentrixFiltersPage = ({
             </div>
           </div>
 
-
+          {/* City Name Section */}
+          <div className="accordion-item">
+            <h2 className="accordion-header" id="panelsStayOpen-headingCityName">
+              <button
+                className="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseheadingCityName"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseheadingCityName"
+              >
+                City Name {formdata.regio_type && formdata.regio_type.length > 0 ? `(${availableCities.length} cities available)` : '(Select Regio Type first)'}
+              </button>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseheadingCityName"
+              className="accordion-collapse collapse"
+              aria-labelledby="panelsStayOpen-headingCityName"
+            >
+              <div id="city_name" className="accordion-body">
+                <p className="accordion-title">
+                  Select cities to target. Available cities are filtered based on selected Regio Type.
+                </p>
+                {availableCities.length > 0 ? (
+                  availableCities.map((city, index) => (
+                    <li key={`city_${index}`} className="product_filters">
+                      <label
+                        className="product_filters_label"
+                        title={city}
+                      >
+                        <input
+                          className="form-check-input rest me-1"
+                          type="checkbox"
+                          value={city}
+                          checked={
+                            formdata.city_name &&
+                            formdata.city_name.includes(city)
+                          }
+                          onChange={handleCityNameChange}
+                        />
+                        {city}
+                      </label>
+                    </li>
+                  ))
+                ) : (
+                  <p style={{ color: '#666', fontStyle: 'italic', padding: '0.5rem 0' }}>
+                    Please select a Regio Type to see available cities.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
 
           {/* Income Section */}
           <div className="accordion-item">

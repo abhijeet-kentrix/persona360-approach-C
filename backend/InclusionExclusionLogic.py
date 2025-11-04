@@ -34,6 +34,12 @@ complete_custom_audience_files = {
         '4.7'
 
     ],
+    "regio_type": [
+        "1",
+        "2",
+        "3",
+        "4"
+    ],
     "income": [
         "1",
         "2",
@@ -229,7 +235,7 @@ def calculate_maid_count(audience_filters):
     filtered_df = df.copy()
 
     # Columns that use numeric values (isin filter)
-    numeric_filter_columns = ['income', 'lifestyle', 'health_care', 'credit_card', 'real_estate', 
+    numeric_filter_columns = ['regio_type', 'income', 'lifestyle', 'health_care', 'credit_card', 'real_estate',
                               'laundry', 'personal_wash', 'packaged_food', 'cosmetics', 'fashion',
                               'jewellery_gold', 'jewellery_diamond', 'travel_spend', 'travel_destination',
                               'online_retail', 'TV', 'Smartphone', 'Refrigerator', 'WashingMachine', 'AirConditioner']
@@ -241,29 +247,39 @@ def calculate_maid_count(audience_filters):
     for filter_key, filter_values in audience_filters.items():
         if not filter_values:  # Skip empty filters
             continue
-        
+
+        # Handle city_name filter (string-based filter)
+        if filter_key == 'city_name':
+            if 'city_name' in filtered_df.columns:
+                print(f"Filtering by city_name: {filter_values}")
+                filtered_df = filtered_df[filtered_df['city_name'].isin(filter_values)]
+                print(f"After city_name filter: {filtered_df.shape}")
+            else:
+                print("Warning: city_name column not found in dataframe")
+
         # Handle numeric filters
-        if filter_key in numeric_filter_columns:
+        elif filter_key in numeric_filter_columns:
             numeric_values = [int(v) for v in filter_values]
-            print(numeric_values)
-            print(filtered_df[filter_key].unique())
+            print(f"Filtering by {filter_key}: {numeric_values}")
+            print(f"Available values in {filter_key}: {filtered_df[filter_key].unique()}")
             filtered_df = filtered_df[filtered_df[filter_key].isin(numeric_values)]
-            print(filtered_df.shape)
-        
+            print(f"After {filter_key} filter: {filtered_df.shape}")
+
         # Handle binary filters (insurance, banking_product, automobile, two_wheeler)
         elif filter_key in binary_filter_columns:
-            print("ornot")
+            print(f"Filtering by binary column: {filter_key}")
             conditions = []
             for value in filter_values:
                 column_name = value  # The value itself is the column name now
                 if column_name in filtered_df.columns:
                     conditions.append(filtered_df[column_name] == 1)
-            
+
             if conditions:
                 combined_condition = conditions[0]
                 for condition in conditions[1:]:
                     combined_condition = combined_condition | condition
                 filtered_df = filtered_df[combined_condition]
+                print(f"After {filter_key} filter: {filtered_df.shape}")
 
     # Calculate sum of maid_count
     print(filtered_df)
@@ -345,6 +361,10 @@ def build_audience_segments(
 
         # Skip income and lifestyle as they're already handled
         if category in ['income', 'lifestyle']:
+            continue
+
+        # Skip city_name as it's a direct filter, not a segment file
+        if category == 'city_name':
             continue
 
         # If whole universe is selected, skip all product filtering
