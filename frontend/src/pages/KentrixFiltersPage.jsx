@@ -4,6 +4,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const KentrixFiltersPage = ({
   formdata,
+  handleRegionTypeChange,
   handleIncomeChange,
   handleLifestyleChange,
   handleSecReferenceChange,
@@ -130,6 +131,10 @@ const KentrixFiltersPage = ({
   };
 
   // Group filters by category
+  const rtFilters = KentrixFiltersDescription.filter(
+    (f) => f.Category === "Regio_Type"
+  );
+
   const incomeFilters = KentrixFiltersDescription.filter(
     (f) => f.Category === "Income"
   );
@@ -217,6 +222,57 @@ const KentrixFiltersPage = ({
     <>
       <div className="filter_container">
         <div className="accordion">
+
+          {/* Regio Type Section */}
+          <div className="accordion-item">
+            <h2 className="accordion-header" id="panelsStayOpen-headingRT">
+              <button
+                className="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseheadingheadingRT"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseheadingheadingRT"
+              >
+                Regio-type : Urban
+              </button>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseheadingheadingRT"
+              className="accordion-collapse collapse"
+              aria-labelledby="panelsStayOpen-headingheadingRT"
+            >
+              <div id="regio_type" className="accordion-body">
+                <p className="accordion-title">
+                  {rtFilters[0]?.FilterDescription}
+                </p>
+                {rtFilters.map((filter, index) => (
+                  <li key={filter.ID} className="product_filters">
+                    <label
+                      className="product_filters_label"
+                      title={filter.PopUpInfoIconDescription || filter.OneLiner}
+                    >
+                      <input
+                        className="form-check-input rest me-1"
+                        type="checkbox"
+                        value={String(index + 1)}
+                        checked={
+                          formdata.regio_type &&
+                          formdata.regio_type.includes(String(index + 1))
+                        }
+                        onChange={handleRegionTypeChange}
+                      />
+                      {filter.SubCategory}
+                    </label>
+                    <FilterDescriptionFunction id={filter.ID} />
+                  </li>
+                ))}
+              </div>
+            </div>
+          </div>
+
+
+
           {/* Income Section */}
           <div className="accordion-item">
             <h2 className="accordion-header" id="panelsStayOpen-headingIncome">
