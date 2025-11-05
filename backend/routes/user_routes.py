@@ -9,7 +9,7 @@ user_bp = Blueprint('users', __name__, url_prefix='/api')
 
 @user_bp.route('/get_users', methods=['GET'])
 @token_required
-def get_users(current_user_id, current_username, current_role, company_name):
+def get_users(current_user_id, current_username, current_role, company_name, dsp):
     """
     Get all users for the current company
     SuperAdmin can see all users
@@ -57,7 +57,7 @@ def get_users(current_user_id, current_username, current_role, company_name):
 @user_bp.route('/users', methods=['POST'])
 @token_required
 @admin_required
-def create_user(current_user_id, current_username, current_role, company_name):
+def create_user(current_user_id, current_username, current_role, company_name, dsp):
     """
     Create a new user
 
@@ -171,7 +171,7 @@ def create_user(current_user_id, current_username, current_role, company_name):
 @user_bp.route('/users/<int:user_id>', methods=['PUT'])
 @token_required
 @admin_required
-def update_user(current_user_id, current_username, current_role, company_name, user_id):
+def update_user(current_user_id, current_username, current_role, company_name, dsp, user_id):
     """
     Update a user (password and/or dsp flag)
 
@@ -250,7 +250,7 @@ def update_user(current_user_id, current_username, current_role, company_name, u
 @user_bp.route('/users/<int:user_id>', methods=['DELETE'])
 @token_required
 @admin_required
-def delete_user(current_user_id, current_username, current_role, company_name, user_id):
+def delete_user(current_user_id, current_username, current_role, company_name, dsp, user_id):
     """
     Delete a user
 

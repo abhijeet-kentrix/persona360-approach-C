@@ -39,7 +39,7 @@ def login():
 
         # Fetch user from database
         cursor.execute("""
-            SELECT id, username, password, role, status, first_name, last_name, company_name
+            SELECT id, username, password, role, status, first_name, last_name, company_name, dsp
             FROM users WHERE username = %s
         """, (username,))
 
@@ -67,6 +67,7 @@ def login():
             'username': user['username'],
             'company_name': user['company_name'],
             'role': user['role'],
+            'dsp': user['dsp'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(
                 hours=current_app.config['JWT_EXPIRATION_HOURS']
             )
@@ -84,7 +85,8 @@ def login():
                 'role': user['role'],
                 'first_name': user['first_name'],
                 'last_name': user['last_name'],
-                'company_name': user['company_name']
+                'company_name': user['company_name'],
+                'dsp': user['dsp']
             }
         }))
 
@@ -129,7 +131,7 @@ def logout():
 
 @auth_bp.route('/protected', methods=['GET'])
 @token_required
-def protected(current_user_id, current_username, current_role, company_name):
+def protected(current_user_id, current_username, current_role, company_name, dsp):
     """
     Protected endpoint to test authentication
 
@@ -140,5 +142,6 @@ def protected(current_user_id, current_username, current_role, company_name):
         'user_id': current_user_id,
         'user_name': current_username,
         'company_name': company_name,
-        'role': current_role
+        'role': current_role,
+        'dsp': dsp
     })

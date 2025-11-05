@@ -51,7 +51,7 @@ const SegmentCard = ({ segments, onRemove }) => (
   </div>
 );
 
-export default function Home({ setLoginUser, setIsAuthenticated }) {
+export default function Home({ setLoginUser, setIsAuthenticated, userDsp }) {
   const [presetsList, setPresetsList] = useState([]);
   const [selectedPreset, setSelectedPreset] = useState("");
   const [selectedPresetId, setSelectedPresetId] = useState(null);
@@ -356,10 +356,20 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
       const res = await buildAudience(payload);
 
       if (res.success) {
-        const { inclusionSegments, exclusionSegments, audienceCount } = res.data;
-        setInclusionSegments(inclusionSegments || []);
-        setExclusionSegments(exclusionSegments || []);
-        setAudienceCount(audienceCount || 0);
+        // Backend returns different data based on DSP flag
+        if (userDsp) {
+          // DSP users only get audience count
+          const { audienceCount } = res.data;
+          setAudienceCount(audienceCount || 0);
+          setInclusionSegments([]);
+          setExclusionSegments([]);
+        } else {
+          // Non-DSP users only get segments
+          const { inclusionSegments, exclusionSegments } = res.data;
+          setInclusionSegments(inclusionSegments || []);
+          setExclusionSegments(exclusionSegments || []);
+          setAudienceCount(null);
+        }
         showMessage("Audience built successfully!", "success");
       } else {
         showMessage(res.error || "Failed to build audience", "error");
@@ -812,101 +822,105 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
               </div>
             )}
 
-            {/* Inclusion Section */}
-            <div style={{ marginBottom: "2rem" }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "1rem",
-                }}
-              >
+            {/* Inclusion Section - Only show when DSP is FALSE */}
+            {!userDsp && (
+              <div style={{ marginBottom: "2rem" }}>
                 <div
                   style={{
-                    width: "12px",
-                    height: "12px",
-                    borderRadius: "50%",
-                    backgroundColor: "#10b981",
-                    marginRight: "0.5rem",
-                  }}
-                ></div>
-                <h3
-                  style={{
-                    fontSize: "1rem",
-                    fontWeight: "600",
-                    color: "#111827",
-                    margin: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "1rem",
                   }}
                 >
-                  Inclusion ({inclusionSegments.length})
-                </h3>
+                  <div
+                    style={{
+                      width: "12px",
+                      height: "12px",
+                      borderRadius: "50%",
+                      backgroundColor: "#10b981",
+                      marginRight: "0.5rem",
+                    }}
+                  ></div>
+                  <h3
+                    style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: "#111827",
+                      margin: 0,
+                    }}
+                  >
+                    Inclusion ({inclusionSegments.length})
+                  </h3>
+                </div>
+                {inclusionSegments.length > 0 ? (
+                  <SegmentCard
+                    segments={inclusionSegments}
+                    onRemove={removeFromInclusion}
+                  />
+                ) : (
+                  <p
+                    style={{
+                      color: "#9ca3af",
+                      fontSize: "0.875rem",
+                      fontStyle: "italic",
+                      margin: "0 0 1rem 0",
+                    }}
+                  >
+                    No inclusion segments selected
+                  </p>
+                )}
               </div>
-              {inclusionSegments.length > 0 ? (
-                <SegmentCard
-                  segments={inclusionSegments}
-                  onRemove={removeFromInclusion}
-                />
-              ) : (
-                <p
-                  style={{
-                    color: "#9ca3af",
-                    fontSize: "0.875rem",
-                    fontStyle: "italic",
-                    margin: "0 0 1rem 0",
-                  }}
-                >
-                  No inclusion segments selected
-                </p>
-              )}
-            </div>
+            )}
 
-            {/* Exclusion Section */}
-            <div style={{ marginBottom: "2rem" }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "1rem",
-                }}
-              >
+            {/* Exclusion Section - Only show when DSP is FALSE */}
+            {!userDsp && (
+              <div style={{ marginBottom: "2rem" }}>
                 <div
                   style={{
-                    width: "12px",
-                    height: "12px",
-                    borderRadius: "50%",
-                    backgroundColor: "#ef4444",
-                    marginRight: "0.5rem",
-                  }}
-                ></div>
-                <h3
-                  style={{
-                    fontSize: "1rem",
-                    fontWeight: "600",
-                    color: "#111827",
-                    margin: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "1rem",
                   }}
                 >
-                  Exclusion ({exclusionSegments.length})
-                </h3>
+                  <div
+                    style={{
+                      width: "12px",
+                      height: "12px",
+                      borderRadius: "50%",
+                      backgroundColor: "#ef4444",
+                      marginRight: "0.5rem",
+                    }}
+                  ></div>
+                  <h3
+                    style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: "#111827",
+                      margin: 0,
+                    }}
+                  >
+                    Exclusion ({exclusionSegments.length})
+                  </h3>
+                </div>
+                {exclusionSegments.length > 0 ? (
+                  <SegmentCard
+                    segments={exclusionSegments}
+                    onRemove={removeFromExclusion}
+                  />
+                ) : (
+                  <p
+                    style={{
+                      color: "#9ca3af",
+                      fontSize: "0.875rem",
+                      fontStyle: "italic",
+                      margin: "0 0 1rem 0",
+                    }}
+                  >
+                    No exclusion segments selected
+                  </p>
+                )}
               </div>
-              {exclusionSegments.length > 0 ? (
-                <SegmentCard
-                  segments={exclusionSegments}
-                  onRemove={removeFromExclusion}
-                />
-              ) : (
-                <p
-                  style={{
-                    color: "#9ca3af",
-                    fontSize: "0.875rem",
-                    fontStyle: "italic",
-                    margin: "0 0 1rem 0",
-                  }}
-                >
-                  No exclusion segments selected
-                </p>
-              )}
-            </div>
+            )}
 
             {/* Build Audience Button */}
             <button
@@ -928,8 +942,8 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
               {isLoading ? "Building..." : "Build Your Audience"}
             </button>
 
-            {/* Audience Count Display */}
-            {(
+            {/* Audience Count Display - Only show when DSP is TRUE */}
+            {userDsp && audienceCount !== null && (
               <div
                 style={{
                   marginTop: "1.5rem",
@@ -969,7 +983,7 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
                     Total Audience Size
                   </h4>
                 </div>
-                
+
                 <div
                   style={{
                     fontSize: "2.5rem",
@@ -981,7 +995,7 @@ export default function Home({ setLoginUser, setIsAuthenticated }) {
                 >
                   {new Intl.NumberFormat('en-IN').format(audienceCount)}
                 </div>
-                
+
                 <p
                   style={{
                     fontSize: "0.75rem",

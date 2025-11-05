@@ -16,6 +16,7 @@ def token_required(f):
     - current_username: Username from JWT
     - current_role: User role from JWT
     - company_name: Company name from JWT
+    - dsp: DSP flag from JWT
     """
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -45,6 +46,7 @@ def token_required(f):
             company_name = data['company_name']
             current_username = data['username']
             current_role = data['role']
+            dsp = data.get('dsp', False)  # Default to False if not present
 
         except jwt.ExpiredSignatureError:
             return jsonify({'error': 'Token expired'}), 401
@@ -52,7 +54,7 @@ def token_required(f):
             return jsonify({'error': 'Invalid token'}), 401
 
         # Call the decorated function with user information
-        return f(current_user_id, current_username, current_role, company_name, *args, **kwargs)
+        return f(current_user_id, current_username, current_role, company_name, dsp, *args, **kwargs)
 
     return decorated
 
@@ -64,10 +66,10 @@ def admin_required(f):
     This decorator should be used after @token_required
     """
     @wraps(f)
-    def decorated(current_user_id, current_username, current_role, company_name, *args, **kwargs):
+    def decorated(current_user_id, current_username, current_role, company_name, dsp, *args, **kwargs):
         if current_role not in ['Admin', 'SuperAdmin']:
             return jsonify({'error': 'Insufficient permissions'}), 403
 
-        return f(current_user_id, current_username, current_role, company_name, *args, **kwargs)
+        return f(current_user_id, current_username, current_role, company_name, dsp, *args, **kwargs)
 
     return decorated

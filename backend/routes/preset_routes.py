@@ -9,7 +9,7 @@ preset_bp = Blueprint('presets', __name__, url_prefix='/api/presets')
 
 @preset_bp.route('', methods=['POST'])
 @token_required
-def create_preset(current_user_id, current_username, current_role, company_name):
+def create_preset(current_user_id, current_username, current_role, company_name, dsp):
     """
     Create a new preset
 
@@ -90,7 +90,7 @@ def create_preset(current_user_id, current_username, current_role, company_name)
 
 @preset_bp.route('/list', methods=['GET'])
 @token_required
-def get_presets_list(current_user_id, current_username, current_role, company_name):
+def get_presets_list(current_user_id, current_username, current_role, company_name, dsp):
     """
     Lightweight endpoint to fetch only preset IDs and names (no JSON data)
     Use this for populating dropdowns
@@ -140,7 +140,7 @@ def get_presets_list(current_user_id, current_username, current_role, company_na
 
 @preset_bp.route('', methods=['GET'])
 @token_required
-def get_all_presets(current_user_id, current_username, current_role, company_name):
+def get_all_presets(current_user_id, current_username, current_role, company_name, dsp):
     """
     Get all presets with pagination and search
 
@@ -238,7 +238,7 @@ def get_all_presets(current_user_id, current_username, current_role, company_nam
 
 @preset_bp.route('/<int:preset_id>', methods=['GET'])
 @token_required
-def get_preset_by_id(current_user_id, current_username, current_role, company_name, preset_id):
+def get_preset_by_id(current_user_id, current_username, current_role, company_name, dsp, preset_id):
     """
     Get a specific preset by ID
     """
@@ -283,7 +283,7 @@ def get_preset_by_id(current_user_id, current_username, current_role, company_na
 
 @preset_bp.route('/<int:preset_id>', methods=['PUT'])
 @token_required
-def update_preset(current_user_id, current_username, current_role, company_name, preset_id):
+def update_preset(current_user_id, current_username, current_role, company_name, dsp, preset_id):
     """
     Update a preset
 
@@ -389,7 +389,7 @@ def update_preset(current_user_id, current_username, current_role, company_name,
 
 @preset_bp.route('/<int:preset_id>', methods=['DELETE'])
 @token_required
-def delete_preset(current_user_id, current_username, current_role, company_name, preset_id):
+def delete_preset(current_user_id, current_username, current_role, company_name, dsp, preset_id):
     """
     Delete a preset
     """
@@ -432,7 +432,7 @@ def delete_preset(current_user_id, current_username, current_role, company_name,
 
 @preset_bp.route('/user/<string:username>', methods=['GET'])
 @token_required
-def get_presets_by_username(current_user_id, current_username, current_role, company_name, username):
+def get_presets_by_username(current_user_id, current_username, current_role, company_name, dsp, username):
     """
     Get all presets for a specific user
     """

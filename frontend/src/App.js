@@ -17,6 +17,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // null: loading
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [userDsp, setUserDsp] = useState(false);
 
   // Make request to protected route to validate auth
   const checkAuth = async () => {
@@ -29,12 +30,14 @@ function App() {
         const role = result.data.role?.toLowerCase();
         setIsSuperAdmin(role === 'superadmin');
         setIsAdmin(role === 'admin' || role === 'superadmin');
+        setUserDsp(result.data.dsp || false);
         setIsAuthenticated(true);
       } else {
         // Only logout on actual auth failure
         setIsAuthenticated(false);
         setIsAdmin(false);
         setIsSuperAdmin(false);
+        setUserDsp(false);
       }
     } catch (error) {
       console.error('Auth check failed:', error);
@@ -43,6 +46,7 @@ function App() {
         setIsAuthenticated(false);
         setIsAdmin(false);
         setIsSuperAdmin(false);
+        setUserDsp(false);
       }
       // For network errors, keep user state unchanged
     }
@@ -61,7 +65,7 @@ function App() {
           path="/"
           element={
             isAuthenticated ? (
-              <Home setIsAuthenticated={setIsAuthenticated} />
+              <Home setIsAuthenticated={setIsAuthenticated} userDsp={userDsp} />
             ) : (
               <Navigate to="/login" replace />
             )
