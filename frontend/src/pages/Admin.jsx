@@ -55,7 +55,7 @@ const Admin = ({ onLoginSuccess }) => {
 
       if (res.data.message === "Login successful") {
         setAlertData({ message: "Login successful!", type: "success" });
-        if (res.data.user.role == "Admin") {
+        if (res.data.user.role === "Admin" || res.data.user.role === "SuperAdmin") {
           // Call onLoginSuccess and wait for auth check to complete
           if (onLoginSuccess) {
             await onLoginSuccess();

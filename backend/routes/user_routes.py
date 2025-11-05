@@ -13,6 +13,7 @@ def get_users(current_user_id, current_username, current_role, company_name):
     """
     Get all users for the current company
     SuperAdmin can see all users
+    Admin can only see users from their own company (excluding other Admins)
 
     Returns list of users ordered by role and first name
     """
@@ -29,10 +30,15 @@ def get_users(current_user_id, current_username, current_role, company_name):
                 "SELECT * FROM users ORDER BY role, first_name ASC"
             )
         else:
-            cursor.execute(
-                "SELECT * FROM users WHERE company_name = %s ORDER BY role, first_name ASC",
-                (company_name,)
-            )
+            # Regular Admin can only see users from their company
+            # This includes all users (Admin, Manager, User) from the same company
+            # Explicitly filter to prevent seeing users from other companies
+            cursor.execute("""
+                SELECT * FROM users
+                WHERE company_name = %s
+                AND company_name IS NOT NULL
+                ORDER BY role, first_name ASC
+            """, (company_name,))
 
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
@@ -86,16 +92,20 @@ def create_user(current_user_id, current_username, current_role, company_name):
     # Determine company name
     target_company_name = company_name
 
-    # SuperAdmin can specify company name for creating admins
+    # SuperAdmin can specify company name when creating users
     if current_role == 'SuperAdmin':
-        if data['role'] == 'Admin':
-            # Company name is required when SuperAdmin creates Admin
-            if not data.get('companyName'):
-                return jsonify({'error': 'Company name is required when creating Admin users'}), 400
-            target_company_name = data['companyName']
-        elif data['role'] == 'SuperAdmin':
+        if data['role'] == 'SuperAdmin':
             # SuperAdmin users don't need a company
             target_company_name = None
+        else:
+            # All non-SuperAdmin users need a company
+            if not data.get('companyName'):
+                return jsonify({'error': 'Company name is required when creating users'}), 400
+            target_company_name = data['companyName']
+
+    # Regular Admin must have a company_name in their token
+    if current_role == 'Admin' and not company_name:
+        return jsonify({'error': 'Admin must belong to a company'}), 403
 
     conn = get_db_connection()
     if not conn:
