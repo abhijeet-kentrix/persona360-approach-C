@@ -51,17 +51,15 @@ const Admin = ({ onLoginSuccess }) => {
     }
 
     try {
-      // const res = await axios.post(
-      //   "http://localhost:5000/api/auth/login",
-      //   { username, password },
-      //   { withCredentials: true }
-      // );
       const res = await loginUser({ username, password });
 
       if (res.data.message === "Login successful") {
         setAlertData({ message: "Login successful!", type: "success" });
         if (res.data.user.role == "Admin") {
-          onLoginSuccess?.();
+          // Call onLoginSuccess and wait for auth check to complete
+          if (onLoginSuccess) {
+            await onLoginSuccess();
+          }
           navigate("/admin");
         } else {
           setAlertData({

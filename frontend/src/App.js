@@ -18,37 +18,37 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
-  useEffect(() => {
-    // Make request to protected route on load to validate auth
-    const checkAuth = async () => {
-      try {
-        // Use getProtectedData from apiClient (has interceptors and correct endpoint)
-        const result = await getProtectedData();
+  // Make request to protected route to validate auth
+  const checkAuth = async () => {
+    try {
+      // Use getProtectedData from apiClient (has interceptors and correct endpoint)
+      const result = await getProtectedData();
 
-        if (result.success && result.data) {
-          // Check role (case-insensitive comparison)
-          const role = result.data.role?.toLowerCase();
-          setIsSuperAdmin(role === 'superadmin');
-          setIsAdmin(role === 'admin' || role === 'superadmin');
-          setIsAuthenticated(true);
-        } else {
-          // Only logout on actual auth failure
-          setIsAuthenticated(false);
-          setIsAdmin(false);
-          setIsSuperAdmin(false);
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        // Only logout on 401 (unauthorized), not on network errors
-        if (error.response?.status === 401) {
-          setIsAuthenticated(false);
-          setIsAdmin(false);
-          setIsSuperAdmin(false);
-        }
-        // For network errors, keep user state unchanged
+      if (result.success && result.data) {
+        // Check role (case-insensitive comparison)
+        const role = result.data.role?.toLowerCase();
+        setIsSuperAdmin(role === 'superadmin');
+        setIsAdmin(role === 'admin' || role === 'superadmin');
+        setIsAuthenticated(true);
+      } else {
+        // Only logout on actual auth failure
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+        setIsSuperAdmin(false);
       }
-    };
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      // Only logout on 401 (unauthorized), not on network errors
+      if (error.response?.status === 401) {
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+        setIsSuperAdmin(false);
+      }
+      // For network errors, keep user state unchanged
+    }
+  };
 
+  useEffect(() => {
     checkAuth();
   }, []);
 
@@ -69,18 +69,18 @@ function App() {
         />
         <Route
           path="/login"
-          element={<Login onLoginSuccess={() => setIsAuthenticated(true)} />}
+          element={<Login onLoginSuccess={checkAuth} />}
         />
         <Route
           path="/admin"
           element={
             isAuthenticated && isAdmin ? (
               <UserManagement
-                onLoginSuccess={() => setIsAuthenticated(true)}
+                onLoginSuccess={checkAuth}
                 setIsAuthenticated={setIsAuthenticated}
               />
             ) : (
-              <Admin onLoginSuccess={() => setIsAuthenticated(true)} />
+              <Admin onLoginSuccess={checkAuth} />
             )
           }
         />
@@ -90,7 +90,7 @@ function App() {
             isAuthenticated && isSuperAdmin ? (
               <Navigate to="/super_admin/dashboard" replace />
             ) : (
-              <SuperAdmin onLoginSuccess={() => setIsAuthenticated(true)} />
+              <SuperAdmin onLoginSuccess={checkAuth} />
             )
           }
         />
@@ -99,7 +99,7 @@ function App() {
           element={
             isAuthenticated && isSuperAdmin ? (
               <AdminManagement
-                onLoginSuccess={() => setIsAuthenticated(true)}
+                onLoginSuccess={checkAuth}
                 setIsAuthenticated={setIsAuthenticated}
               />
             ) : (

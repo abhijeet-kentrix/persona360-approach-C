@@ -56,7 +56,10 @@ const SuperAdmin = ({ onLoginSuccess }) => {
       if (res.data.message === "Login successful") {
         setAlertData({ message: "Login successful!", type: "success" });
         if (res.data.user.role === "SuperAdmin") {
-          onLoginSuccess?.();
+          // Call onLoginSuccess and wait for auth check to complete
+          if (onLoginSuccess) {
+            await onLoginSuccess();
+          }
           navigate("/super_admin/dashboard");
         } else {
           setAlertData({

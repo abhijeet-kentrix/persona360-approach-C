@@ -46,16 +46,14 @@ const Login = ({ onLoginSuccess }) => {
     }
 
     try {
-      // const res = await axios.post(
-      //   "http://localhost:5000/login",
-      //   { username, password },
-      //   { withCredentials: true }
-      // );
       const res = await loginUser({ username, password });
 
       if (res.data.message === "Login successful") {
         setAlertData({ message: "Login successful!", type: "success" });
-        onLoginSuccess?.();
+        // Call onLoginSuccess and wait for auth check to complete
+        if (onLoginSuccess) {
+          await onLoginSuccess();
+        }
         navigate("/");
       } else {
         setAlertData({ message: "Invalid credentials", type: "warning" });
