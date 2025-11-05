@@ -65,7 +65,7 @@ def admin_required(f):
     """
     @wraps(f)
     def decorated(current_user_id, current_username, current_role, company_name, *args, **kwargs):
-        if current_role not in ['Admin', 'super_admin']:
+        if current_role not in ['Admin', 'SuperAdmin']:
             return jsonify({'error': 'Insufficient permissions'}), 403
 
         return f(current_user_id, current_username, current_role, company_name, *args, **kwargs)

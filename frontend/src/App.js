@@ -1,7 +1,9 @@
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import SuperAdmin from "./pages/SuperAdmin";
 import Home from "./pages/Home";
 import UserManagement from "./pages/UserManagement";
+import AdminManagement from "./pages/AdminManagement";
 import {
   BrowserRouter as Router,
   Routes,
@@ -14,6 +16,7 @@ import { getProtectedData } from "./apiClient";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // null: loading
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
   useEffect(() => {
     // Make request to protected route on load to validate auth
@@ -25,12 +28,14 @@ function App() {
         if (result.success && result.data) {
           // Check role (case-insensitive comparison)
           const role = result.data.role?.toLowerCase();
-          setIsAdmin(role === 'admin' || role === 'super_admin');
+          setIsSuperAdmin(role === 'superadmin');
+          setIsAdmin(role === 'admin' || role === 'superadmin');
           setIsAuthenticated(true);
         } else {
           // Only logout on actual auth failure
           setIsAuthenticated(false);
           setIsAdmin(false);
+          setIsSuperAdmin(false);
         }
       } catch (error) {
         console.error('Auth check failed:', error);
@@ -38,6 +43,7 @@ function App() {
         if (error.response?.status === 401) {
           setIsAuthenticated(false);
           setIsAdmin(false);
+          setIsSuperAdmin(false);
         }
         // For network errors, keep user state unchanged
       }
@@ -68,7 +74,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            isAuthenticated ? (
+            isAuthenticated && isAdmin ? (
               <UserManagement
                 onLoginSuccess={() => setIsAuthenticated(true)}
                 setIsAuthenticated={setIsAuthenticated}
@@ -77,13 +83,30 @@ function App() {
               <Admin onLoginSuccess={() => setIsAuthenticated(true)} />
             )
           }
-
-          // <Admin onLoginSuccess={() => setIsAuthenticated(true)} />}
         />
-        {/* <Route
-          path="/user_management"
-          element={<UserManagement onLoginSuccess={() => setIsAuthenticated(true) } setIsAuthenticated={setIsAuthenticated} />}
-        /> */}
+        <Route
+          path="/super_admin"
+          element={
+            isAuthenticated && isSuperAdmin ? (
+              <Navigate to="/super_admin/dashboard" replace />
+            ) : (
+              <SuperAdmin onLoginSuccess={() => setIsAuthenticated(true)} />
+            )
+          }
+        />
+        <Route
+          path="/super_admin/dashboard"
+          element={
+            isAuthenticated && isSuperAdmin ? (
+              <AdminManagement
+                onLoginSuccess={() => setIsAuthenticated(true)}
+                setIsAuthenticated={setIsAuthenticated}
+              />
+            ) : (
+              <Navigate to="/super_admin" replace />
+            )
+          }
+        />
       </Routes>
     </Router>
   );

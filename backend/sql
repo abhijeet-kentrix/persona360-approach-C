@@ -10,7 +10,8 @@ CREATE TABLE users (
     status BOOLEAN NOT NULL,
     created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_by_id INTEGER NOT NULL
+    created_by_id INTEGER NOT NULL,
+    DSP BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 INSERT INTO users (first_name, last_name, company_name, username, password, role, status, created_by_id) VALUES

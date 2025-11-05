@@ -12,6 +12,7 @@ user_bp = Blueprint('users', __name__, url_prefix='/api')
 def get_users(current_user_id, current_username, current_role, company_name):
     """
     Get all users for the current company
+    SuperAdmin can see all users
 
     Returns list of users ordered by role and first name
     """
@@ -21,10 +22,18 @@ def get_users(current_user_id, current_username, current_role, company_name):
 
     try:
         cursor = conn.cursor()
-        cursor.execute(
-            "SELECT * FROM users WHERE company_name = %s ORDER BY role, first_name ASC",
-            (company_name,)
-        )
+
+        # SuperAdmin can see all users
+        if current_role == 'SuperAdmin':
+            cursor.execute(
+                "SELECT * FROM users ORDER BY role, first_name ASC"
+            )
+        else:
+            cursor.execute(
+                "SELECT * FROM users WHERE company_name = %s ORDER BY role, first_name ASC",
+                (company_name,)
+            )
+
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         users = [{col: row[col] for col in columns if col in row} for row in rows]
@@ -46,14 +55,15 @@ def create_user(current_user_id, current_username, current_role, company_name):
     """
     Create a new user
 
-    Requires Admin or super_admin role
+    Requires Admin or SuperAdmin role
 
     Request body:
         - firstName: str
         - lastName: str
         - username: str
         - password: str
-        - role: str (Admin, User, Manager)
+        - role: str (Admin, User, Manager, SuperAdmin)
+        - companyName: str (required for SuperAdmin creating admins)
         - status: bool (optional, default True)
     """
     data = request.json
@@ -65,9 +75,27 @@ def create_user(current_user_id, current_username, current_role, company_name):
             return jsonify({'error': f'{field} is required'}), 400
 
     # Validate role
-    valid_roles = ['Admin', 'User', 'Manager']
+    valid_roles = ['Admin', 'User', 'Manager', 'SuperAdmin']
     if data['role'] not in valid_roles:
         return jsonify({'error': 'Invalid role specified'}), 400
+
+    # Only SuperAdmin can create SuperAdmin users
+    if data['role'] == 'SuperAdmin' and current_role != 'SuperAdmin':
+        return jsonify({'error': 'Only SuperAdmin can create SuperAdmin users'}), 403
+
+    # Determine company name
+    target_company_name = company_name
+
+    # SuperAdmin can specify company name for creating admins
+    if current_role == 'SuperAdmin':
+        if data['role'] == 'Admin':
+            # Company name is required when SuperAdmin creates Admin
+            if not data.get('companyName'):
+                return jsonify({'error': 'Company name is required when creating Admin users'}), 400
+            target_company_name = data['companyName']
+        elif data['role'] == 'SuperAdmin':
+            # SuperAdmin users don't need a company
+            target_company_name = None
 
     conn = get_db_connection()
     if not conn:
@@ -93,7 +121,7 @@ def create_user(current_user_id, current_username, current_role, company_name):
             cursor.execute(insert_query, (
                 data['firstName'],
                 data['lastName'],
-                company_name,
+                target_company_name,
                 data['username'],
                 hashed_password,
                 data['role'],
@@ -110,7 +138,7 @@ def create_user(current_user_id, current_username, current_role, company_name):
                     'id': new_user['id'],
                     'first_name': new_user['first_name'],
                     'last_name': new_user['last_name'],
-                    'company_name': company_name,
+                    'company_name': target_company_name,
                     'username': new_user['username'],
                     'role': new_user['role'],
                     'status': new_user['status'],
