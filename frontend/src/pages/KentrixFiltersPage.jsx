@@ -54,6 +54,7 @@ const KentrixFiltersPage = ({
   }
 
   const [selectedId, setSelectedId] = useState(null);
+  const [citySearchTerm, setCitySearchTerm] = useState("");
 
   // Helper function to get filter description by ID
   const getFilterById = (id) => {
@@ -159,6 +160,16 @@ const KentrixFiltersPage = ({
     // Remove duplicates and sort
     return [...new Set(cities)].sort();
   }, [formdata.regio_type, rtFilters]);
+
+  // Filter cities based on search term
+  const filteredCities = useMemo(() => {
+    if (!citySearchTerm.trim()) {
+      return availableCities;
+    }
+    return availableCities.filter(city =>
+      city.toLowerCase().includes(citySearchTerm.toLowerCase())
+    );
+  }, [availableCities, citySearchTerm]);
 
   const incomeFilters = KentrixFiltersDescription.filter(
     (f) => f.Category === "Income"
@@ -320,26 +331,61 @@ const KentrixFiltersPage = ({
                   Select cities to target. Available cities are filtered based on selected Regio Type.
                 </p>
                 {availableCities.length > 0 ? (
-                  availableCities.map((city, index) => (
-                    <li key={`city_${index}`} className="product_filters">
-                      <label
-                        className="product_filters_label"
-                        title={city}
-                      >
-                        <input
-                          className="form-check-input rest me-1"
-                          type="checkbox"
-                          value={city}
-                          checked={
-                            formdata.city_name &&
-                            formdata.city_name.includes(city)
-                          }
-                          onChange={handleCityNameChange}
-                        />
-                        {city}
-                      </label>
-                    </li>
-                  ))
+                  <>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search cities..."
+                        value={citySearchTerm}
+                        onChange={(e) => setCitySearchTerm(e.target.value)}
+                        style={{
+                          padding: '0.5rem',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                      {citySearchTerm && (
+                        <small style={{ color: '#666', marginTop: '0.25rem', display: 'block' }}>
+                          Showing {filteredCities.length} of {availableCities.length} cities
+                        </small>
+                      )}
+                    </div>
+                    <div style={{
+                      maxHeight: '400px',
+                      overflowY: 'auto',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '4px',
+                      padding: '0.5rem'
+                    }}>
+                      {filteredCities.length > 0 ? (
+                        filteredCities.map((city, index) => (
+                          <li key={`city_${index}`} className="product_filters">
+                            <label
+                              className="product_filters_label"
+                              title={city}
+                            >
+                              <input
+                                className="form-check-input rest me-1"
+                                type="checkbox"
+                                value={city}
+                                checked={
+                                  formdata.city_name &&
+                                  formdata.city_name.includes(city)
+                                }
+                                onChange={handleCityNameChange}
+                              />
+                              {city}
+                            </label>
+                          </li>
+                        ))
+                      ) : (
+                        <p style={{ color: '#666', fontStyle: 'italic', padding: '0.5rem 0', textAlign: 'center' }}>
+                          No cities match your search.
+                        </p>
+                      )}
+                    </div>
+                  </>
                 ) : (
                   <p style={{ color: '#666', fontStyle: 'italic', padding: '0.5rem 0' }}>
                     Please select a Regio Type to see available cities.
