@@ -310,6 +310,24 @@ export const deleteUser = async (userId) => {
   }
 };
 
+// UPDATE USER
+export const updateUser = async (userId, userData) => {
+  try {
+    const response = await apiClient.put(`/users/${userId}`, userData);
+    return {
+      success: true,
+      data: response.data,
+      message: "User updated successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.error || "Failed to update user",
+      status: error.response?.status,
+    };
+  }
+};
+
 // ========================================
 // AUTHENTICATION OPERATIONS
 // ========================================

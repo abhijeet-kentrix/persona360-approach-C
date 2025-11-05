@@ -23,6 +23,9 @@ import {
   Tooltip,
   Alert,
   Snackbar,
+  InputAdornment,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -30,8 +33,11 @@ import {
   Business as BusinessIcon,
   Logout as LogoutIcon,
   SupervisorAccount,
+  Edit as EditIcon,
+  Visibility,
+  VisibilityOff,
 } from "@mui/icons-material";
-import { createUser, listUser, deleteUser } from "../apiClient";
+import { createUser, listUser, deleteUser, updateUser } from "../apiClient";
 
 const AdminManagement = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -49,6 +55,9 @@ const AdminManagement = ({ setIsAuthenticated }) => {
 
   const [admins, setAdmins] = useState([]);
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showEditPassword, setShowEditPassword] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -61,6 +70,13 @@ const AdminManagement = ({ setIsAuthenticated }) => {
     password: "",
     companyName: "",
     role: "Admin",
+    dsp: false,
+  });
+  const [editAdmin, setEditAdmin] = useState({
+    id: null,
+    username: "",
+    password: "",
+    dsp: false,
   });
 
   const handleCreateAdmin = () => {
@@ -94,6 +110,7 @@ const AdminManagement = ({ setIsAuthenticated }) => {
           password: "",
           companyName: "",
           role: "Admin",
+          dsp: false,
         });
       } else {
         setSnackbar({
@@ -116,6 +133,54 @@ const AdminManagement = ({ setIsAuthenticated }) => {
           severity: "success",
         });
         fetchData();
+      } else {
+        setSnackbar({
+          open: true,
+          message: res.error,
+          severity: "error",
+        });
+      }
+    });
+  };
+
+  const handleOpenEdit = (admin) => {
+    setEditAdmin({
+      id: admin.id,
+      username: admin.username,
+      password: "",
+      dsp: admin.dsp || false,
+    });
+    setEditOpen(true);
+  };
+
+  const handleUpdateAdmin = () => {
+    if (!editAdmin.password) {
+      setSnackbar({
+        open: true,
+        message: "Password is required",
+        severity: "error",
+      });
+      return;
+    }
+
+    updateUser(editAdmin.id, {
+      password: editAdmin.password,
+      dsp: editAdmin.dsp,
+    }).then((res) => {
+      if (res.success) {
+        setSnackbar({
+          open: true,
+          message: "Admin updated successfully",
+          severity: "success",
+        });
+        fetchData();
+        setEditOpen(false);
+        setEditAdmin({
+          id: null,
+          username: "",
+          password: "",
+          dsp: false,
+        });
       } else {
         setSnackbar({
           open: true,
@@ -290,6 +355,16 @@ const AdminManagement = ({ setIsAuthenticated }) => {
                     textAlign: "center",
                   }}
                 >
+                  DSP
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 600,
+                    color: "#475569",
+                    fontSize: "0.875rem",
+                    textAlign: "center",
+                  }}
+                >
                   Actions
                 </TableCell>
               </TableRow>
@@ -380,6 +455,27 @@ const AdminManagement = ({ setIsAuthenticated }) => {
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
+                    <Chip
+                      label={admin.dsp ? "Enabled" : "Disabled"}
+                      color={admin.dsp ? "success" : "default"}
+                      size="small"
+                      variant="outlined"
+                      sx={{ fontWeight: 500, fontSize: "0.75rem" }}
+                    />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Tooltip title="Edit admin">
+                      <IconButton
+                        onClick={() => handleOpenEdit(admin)}
+                        sx={{
+                          color: "#3b82f6",
+                          "&:hover": { bgcolor: "#eff6ff" },
+                        }}
+                        size="small"
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                     <Tooltip title="Delete admin">
                       <IconButton
                         onClick={() => handleDeleteAdmin(admin.id)}
@@ -457,7 +553,7 @@ const AdminManagement = ({ setIsAuthenticated }) => {
             />
             <TextField
               label="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={newAdmin.password}
               onChange={(e) =>
                 setNewAdmin({ ...newAdmin, password: e.target.value })
@@ -465,6 +561,30 @@ const AdminManagement = ({ setIsAuthenticated }) => {
               fullWidth
               variant="outlined"
               required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={newAdmin.dsp}
+                  onChange={(e) =>
+                    setNewAdmin({ ...newAdmin, dsp: e.target.checked })
+                  }
+                  color="primary"
+                />
+              }
+              label="DSP (Show Audience Count)"
             />
           </Box>
         </DialogContent>
@@ -486,6 +606,83 @@ const AdminManagement = ({ setIsAuthenticated }) => {
             }}
           >
             Create Admin
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit Admin Dialog */}
+      <Dialog
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Edit Admin - {editAdmin.username}
+          </Typography>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+            <Alert severity="info" sx={{ mb: 1 }}>
+              Update password and DSP flag for this admin
+            </Alert>
+            <TextField
+              label="New Password"
+              type={showEditPassword ? "text" : "password"}
+              value={editAdmin.password}
+              onChange={(e) =>
+                setEditAdmin({ ...editAdmin, password: e.target.value })
+              }
+              fullWidth
+              variant="outlined"
+              required
+              helperText="Enter a new password to reset"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowEditPassword(!showEditPassword)}
+                      edge="end"
+                    >
+                      {showEditPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={editAdmin.dsp}
+                  onChange={(e) =>
+                    setEditAdmin({ ...editAdmin, dsp: e.target.checked })
+                  }
+                  color="primary"
+                />
+              }
+              label="DSP (Show Audience Count)"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 2 }}>
+          <Button onClick={() => setEditOpen(false)} sx={{ textTransform: "none" }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleUpdateAdmin}
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              borderRadius: 2,
+              background: "linear-gradient(135deg, #0f172a 0%, #334155 100%)",
+              "&:hover": {
+                background: "linear-gradient(135deg, #020617 0%, #1e293b 100%)",
+              },
+            }}
+          >
+            Update Admin
           </Button>
         </DialogActions>
       </Dialog>
