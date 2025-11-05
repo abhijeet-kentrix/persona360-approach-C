@@ -56,6 +56,8 @@ const AdminManagement = ({ setIsAuthenticated }) => {
   const [admins, setAdmins] = useState([]);
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [adminToDelete, setAdminToDelete] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showEditPassword, setShowEditPassword] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -124,23 +126,36 @@ const AdminManagement = ({ setIsAuthenticated }) => {
     setOpen(false);
   };
 
-  const handleDeleteAdmin = (id) => {
-    deleteUser(id).then((res) => {
-      if (res.success) {
-        setSnackbar({
-          open: true,
-          message: "Admin deleted successfully",
-          severity: "success",
-        });
-        fetchData();
-      } else {
-        setSnackbar({
-          open: true,
-          message: res.error,
-          severity: "error",
-        });
-      }
-    });
+  const handleOpenDeleteConfirm = (admin) => {
+    setAdminToDelete(admin);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleCloseDeleteConfirm = () => {
+    setDeleteConfirmOpen(false);
+    setAdminToDelete(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (adminToDelete) {
+      deleteUser(adminToDelete.id).then((res) => {
+        if (res.success) {
+          setSnackbar({
+            open: true,
+            message: "Admin deleted successfully",
+            severity: "success",
+          });
+          fetchData();
+        } else {
+          setSnackbar({
+            open: true,
+            message: res.error,
+            severity: "error",
+          });
+        }
+        handleCloseDeleteConfirm();
+      });
+    }
   };
 
   const handleOpenEdit = (admin) => {
@@ -478,7 +493,7 @@ const AdminManagement = ({ setIsAuthenticated }) => {
                     </Tooltip>
                     <Tooltip title="Delete admin">
                       <IconButton
-                        onClick={() => handleDeleteAdmin(admin.id)}
+                        onClick={() => handleOpenDeleteConfirm(admin)}
                         sx={{
                           color: "#ef4444",
                           "&:hover": { bgcolor: "#fef2f2" },
@@ -683,6 +698,55 @@ const AdminManagement = ({ setIsAuthenticated }) => {
             }}
           >
             Update Admin
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={handleCloseDeleteConfirm}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "#dc2626" }}>
+            Confirm Delete
+          </Typography>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 2 }}>
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            This action cannot be undone!
+          </Alert>
+          <Typography variant="body1">
+            Are you sure you want to delete admin{" "}
+            <strong>{adminToDelete?.username}</strong>?
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 2, color: "#666" }}>
+            Company: {adminToDelete?.company_name}
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 2 }}>
+          <Button
+            onClick={handleCloseDeleteConfirm}
+            sx={{ textTransform: "none" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              borderRadius: 2,
+              background: "#dc2626",
+              "&:hover": {
+                background: "#b91c1c",
+              },
+            }}
+          >
+            Delete Admin
           </Button>
         </DialogActions>
       </Dialog>

@@ -82,6 +82,8 @@ const UserManagement = ({ setIsAuthenticated }) => {
   //   ]);
 
   const [open, setOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -129,23 +131,36 @@ const UserManagement = ({ setIsAuthenticated }) => {
     setOpen(false);
   };
 
-  const handleDeleteUser = (id) => {
-    deleteUser(id).then((res) => {
-      if (res.success) {
-        setSnackbar({
-          open: true,
-          message: "User deleted successfully",
-          severity: "success",
-        });
-        fetchData();
-      } else {
-        setSnackbar({
-          open: true,
-          message: res.error,
-          severity: "error",
-        });
-      }
-    });
+  const handleOpenDeleteConfirm = (user) => {
+    setUserToDelete(user);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleCloseDeleteConfirm = () => {
+    setDeleteConfirmOpen(false);
+    setUserToDelete(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (userToDelete) {
+      deleteUser(userToDelete.id).then((res) => {
+        if (res.success) {
+          setSnackbar({
+            open: true,
+            message: "User deleted successfully",
+            severity: "success",
+          });
+          fetchData();
+        } else {
+          setSnackbar({
+            open: true,
+            message: res.error,
+            severity: "error",
+          });
+        }
+        handleCloseDeleteConfirm();
+      });
+    }
   };
 
   const handleLogout = async () => {
@@ -437,7 +452,7 @@ const UserManagement = ({ setIsAuthenticated }) => {
                   <TableCell align="center">
                     <Tooltip title="Delete user">
                       <IconButton
-                        onClick={() => handleDeleteUser(user.id)}
+                        onClick={() => handleOpenDeleteConfirm(user)}
                         sx={{
                           color: "#ef4444",
                           "&:hover": { bgcolor: "#fef2f2" },
@@ -553,6 +568,58 @@ const UserManagement = ({ setIsAuthenticated }) => {
             }}
           >
             Create User
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={handleCloseDeleteConfirm}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "#dc2626" }}>
+            Confirm Delete
+          </Typography>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 2 }}>
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            This action cannot be undone!
+          </Alert>
+          <Typography variant="body1">
+            Are you sure you want to delete user{" "}
+            <strong>{userToDelete?.username}</strong>?
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 2, color: "#666" }}>
+            Name: {userToDelete?.first_name} {userToDelete?.last_name}
+          </Typography>
+          <Typography variant="body2" sx={{ color: "#666" }}>
+            Role: {userToDelete?.role}
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 2 }}>
+          <Button
+            onClick={handleCloseDeleteConfirm}
+            sx={{ textTransform: "none" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              borderRadius: 2,
+              background: "#dc2626",
+              "&:hover": {
+                background: "#b91c1c",
+              },
+            }}
+          >
+            Delete User
           </Button>
         </DialogActions>
       </Dialog>
