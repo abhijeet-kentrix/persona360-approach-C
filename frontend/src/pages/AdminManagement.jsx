@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -37,7 +36,7 @@ import {
   Visibility,
   VisibilityOff,
 } from "@mui/icons-material";
-import { createUser, listUser, deleteUser, updateUser } from "../apiClient";
+import { createUser, listUser, deleteUser, updateUser, logoutUser } from "../apiClient";
 
 const AdminManagement = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -207,19 +206,22 @@ const AdminManagement = ({ setIsAuthenticated }) => {
   };
 
   const handleLogout = async () => {
-    await axios.post(
-      "http://localhost:5000/api/auth/logout",
-      {},
-      { withCredentials: true }
-    );
-    setIsAuthenticated(false);
-    navigate("/super_admin");
-    setSnackbar({
-      open: true,
-      message: "Logged out successfully",
-      severity: "success",
-    });
-    console.log("Logout clicked");
+    const result = await logoutUser();
+    if (result.success) {
+      setIsAuthenticated(false);
+      navigate("/super_admin");
+      setSnackbar({
+        open: true,
+        message: "Logged out successfully",
+        severity: "success",
+      });
+    } else {
+      setSnackbar({
+        open: true,
+        message: result.error || "Logout failed",
+        severity: "error",
+      });
+    }
   };
 
   const getInitials = (name) => {

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -31,7 +30,7 @@ import {
   Business as BusinessIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import { createUser, listUser, deleteUser } from "../apiClient";
+import { createUser, listUser, deleteUser, logoutUser } from "../apiClient";
 
 const UserManagement = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -164,22 +163,22 @@ const UserManagement = ({ setIsAuthenticated }) => {
   };
 
   const handleLogout = async () => {
-    await axios.post(
-      "http://localhost:5000/api/auth/logout",
-      {},
-      { withCredentials: true }
-    );
-    setIsAuthenticated(false);
-    navigate("/login");
-    setSnackbar({
-      open: true,
-      message: "Logged out successfully",
-      severity: "success",
-    });
-
-    // Here you would typically handle the actual logout logic
-    // such as clearing tokens, redirecting to login page, etc.
-    console.log("Logout clicked");
+    const result = await logoutUser();
+    if (result.success) {
+      setIsAuthenticated(false);
+      navigate("/login");
+      setSnackbar({
+        open: true,
+        message: "Logged out successfully",
+        severity: "success",
+      });
+    } else {
+      setSnackbar({
+        open: true,
+        message: result.error || "Logout failed",
+        severity: "error",
+      });
+    }
   };
 
   const getStatusColor = (status) => {
