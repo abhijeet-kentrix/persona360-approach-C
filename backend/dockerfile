@@ -19,5 +19,5 @@ COPY . .
 # Expose the port that the Flask app will run on
 EXPOSE 5000
 
-# Start the Flask app
-# CMD ["python", "app.py"]
+# Start the Flask app with Gunicorn (production server)
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "app:app"]

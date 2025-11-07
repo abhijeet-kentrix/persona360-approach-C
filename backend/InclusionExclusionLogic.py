@@ -208,8 +208,8 @@ complete_custom_audience_files = {
 
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CSV_PATH = os.path.join(BASE_DIR, 'backend\\data', 'for_dashboard.csv')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH = os.path.join(BASE_DIR, 'data', 'for_dashboard.csv')
 
 # Load dataframe globally
 try:
