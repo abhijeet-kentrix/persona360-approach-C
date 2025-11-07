@@ -1,2 +1,7 @@
 FROM nginx
 COPY ./default.conf /etc/nginx/conf.d/default.conf
+# Copy SSL certificates from the host
+COPY  certs/fullchain.pem /etc/nginx/ssl/fullchain.pem
+COPY  certs/privkey.pem /etc/nginx/ssl/privkey.pem
+EXPOSE 80
+EXPOSE 443
