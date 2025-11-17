@@ -4,6 +4,7 @@ import SuperAdmin from "./pages/SuperAdmin";
 import Home from "./pages/Home";
 import UserManagement from "./pages/UserManagement";
 import AdminManagement from "./pages/AdminManagement";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import {
   BrowserRouter as Router,
   Routes,
@@ -110,6 +111,10 @@ function App() {
               <Navigate to="/super_admin" replace />
             )
           }
+        />
+        <Route
+          path="/privacypolicy"
+          element={<PrivacyPolicy />}
         />
       </Routes>
     </Router>
