@@ -52,7 +52,7 @@ const SegmentCard = ({ segments, onRemove }) => (
   </div>
 );
 
-export default function Home({ setLoginUser, setIsAuthenticated, userDsp }) {
+export default function Home({ setLoginUser, setIsAuthenticated, userDsp, companyName }) {
   const [presetsList, setPresetsList] = useState([]);
   const [selectedPreset, setSelectedPreset] = useState("");
   const [selectedPresetId, setSelectedPresetId] = useState(null);
@@ -1130,31 +1130,33 @@ export default function Home({ setLoginUser, setIsAuthenticated, userDsp }) {
                 fontWeight: "500",
                 cursor: isLoading ? "not-allowed" : "pointer",
                 transition: "background-color 0.2s",
-                marginBottom: "0.75rem",
+                marginBottom: companyName === "KENTRIX" ? "0.75rem" : "0",
               }}
             >
               {isLoading ? "Building..." : "Build Your Audience"}
             </button>
 
-            {/* Create Campaign Button */}
-            <button
-              onClick={() => setShowCampaignDialog(true)}
-              disabled={isLoading}
-              style={{
-                width: "100%",
-                padding: "0.75rem 1.5rem",
-                backgroundColor: isLoading ? "#9ca3af" : "#10b981",
-                color: "white",
-                border: "none",
-                borderRadius: "6px",
-                fontSize: "1rem",
-                fontWeight: "500",
-                cursor: isLoading ? "not-allowed" : "pointer",
-                transition: "background-color 0.2s",
-              }}
-            >
-              Create Campaign
-            </button>
+            {/* Create Campaign Button - Only show for KENTRIX company */}
+            {companyName === "KENTRIX" && (
+              <button
+                onClick={() => setShowCampaignDialog(true)}
+                disabled={isLoading}
+                style={{
+                  width: "100%",
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: isLoading ? "#9ca3af" : "#10b981",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontSize: "1rem",
+                  fontWeight: "500",
+                  cursor: isLoading ? "not-allowed" : "pointer",
+                  transition: "background-color 0.2s",
+                }}
+              >
+                Create Campaign
+              </button>
+            )}
 
             {/* Audience Count Display - Only show when DSP is TRUE */}
             {userDsp && audienceCount !== null && (
