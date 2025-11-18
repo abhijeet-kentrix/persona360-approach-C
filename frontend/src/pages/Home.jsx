@@ -7,7 +7,8 @@ import {
   getPresetById,
   updatePreset,
   deletePreset,
-  buildAudience
+  buildAudience,
+  createCampaign
 } from "../apiClient";
 
 const SegmentCard = ({ segments, onRemove }) => (
@@ -60,6 +61,9 @@ export default function Home({ setLoginUser, setIsAuthenticated, userDsp }) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [audienceCount, setAudienceCount] = useState(null);
+  const [showCampaignDialog, setShowCampaignDialog] = useState(false);
+  const [campaignName, setCampaignName] = useState("");
+  const [campaignObjective, setCampaignObjective] = useState("OUTCOME_TRAFFIC");
 
   const [inclusionSegments, setInclusionSegments] = useState([]);
   const [exclusionSegments, setExclusionSegments] = useState([]);
@@ -377,6 +381,38 @@ export default function Home({ setLoginUser, setIsAuthenticated, userDsp }) {
     } catch (error) {
       console.error("Error building audience:", error);
       showMessage("Error building audience", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Create Campaign - Main function
+  const handleCreateCampaign = async () => {
+    if (!campaignName.trim()) {
+      showMessage("Please enter a campaign name", "error");
+      return;
+    }
+
+    setIsLoading(true);
+    const payload = {
+      campaign_name: campaignName,
+      campaign_objective: campaignObjective,
+    };
+
+    try {
+      const res = await createCampaign(payload);
+
+      if (res.success) {
+        showMessage(`Campaign created successfully! ID: ${res.data.campaign_id || 'N/A'}`, "success");
+        setCampaignName("");
+        setCampaignObjective("OUTCOME_TRAFFIC");
+        setShowCampaignDialog(false);
+      } else {
+        showMessage(res.error || "Failed to create campaign", "error");
+      }
+    } catch (error) {
+      console.error("Error creating campaign:", error);
+      showMessage("Error creating campaign", "error");
     } finally {
       setIsLoading(false);
     }
@@ -822,6 +858,163 @@ export default function Home({ setLoginUser, setIsAuthenticated, userDsp }) {
               </div>
             )}
 
+            {/* Create Campaign Dialog */}
+            {showCampaignDialog && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 1000,
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor: "white",
+                    padding: "2rem",
+                    borderRadius: "8px",
+                    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
+                    minWidth: "400px",
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: "0 0 1.5rem 0",
+                      fontSize: "1.125rem",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Create Facebook Campaign
+                  </h3>
+
+                  <div style={{ marginBottom: "1rem" }}>
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        marginBottom: "0.5rem",
+                        color: "#374151",
+                      }}
+                    >
+                      Campaign Name
+                    </label>
+                    <input
+                      type="text"
+                      value={campaignName}
+                      onChange={(e) => setCampaignName(e.target.value)}
+                      placeholder="Enter campaign name..."
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        fontSize: "0.875rem",
+                        boxSizing: "border-box",
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleCreateCampaign();
+                        } else if (e.key === "Escape") {
+                          setShowCampaignDialog(false);
+                          setCampaignName("");
+                        }
+                      }}
+                      autoFocus
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: "1.5rem" }}>
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        marginBottom: "0.5rem",
+                        color: "#374151",
+                      }}
+                    >
+                      Campaign Objective
+                    </label>
+                    <select
+                      value={campaignObjective}
+                      onChange={(e) => setCampaignObjective(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        fontSize: "0.875rem",
+                        boxSizing: "border-box",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <option value="OUTCOME_TRAFFIC">Traffic</option>
+                      <option value="OUTCOME_AWARENESS">Awareness</option>
+                      <option value="OUTCOME_ENGAGEMENT">Engagement</option>
+                      <option value="OUTCOME_LEADS">Leads</option>
+                      <option value="OUTCOME_SALES">Sales</option>
+                      <option value="OUTCOME_APP_PROMOTION">App Promotion</option>
+                    </select>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.75rem",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <button
+                      onClick={() => {
+                        setShowCampaignDialog(false);
+                        setCampaignName("");
+                        setCampaignObjective("OUTCOME_TRAFFIC");
+                      }}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        backgroundColor: "white",
+                        cursor: "pointer",
+                        fontSize: "0.875rem",
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleCreateCampaign}
+                      disabled={!campaignName.trim() || isLoading}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor:
+                          campaignName.trim() && !isLoading
+                            ? "#10b981"
+                            : "#9ca3af",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor:
+                          campaignName.trim() && !isLoading
+                            ? "pointer"
+                            : "not-allowed",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                      }}
+                    >
+                      {isLoading ? "Creating..." : "Create Campaign"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Inclusion Section - Only show when DSP is FALSE */}
             {!userDsp && (
               <div style={{ marginBottom: "2rem" }}>
@@ -937,9 +1130,30 @@ export default function Home({ setLoginUser, setIsAuthenticated, userDsp }) {
                 fontWeight: "500",
                 cursor: isLoading ? "not-allowed" : "pointer",
                 transition: "background-color 0.2s",
+                marginBottom: "0.75rem",
               }}
             >
               {isLoading ? "Building..." : "Build Your Audience"}
+            </button>
+
+            {/* Create Campaign Button */}
+            <button
+              onClick={() => setShowCampaignDialog(true)}
+              disabled={isLoading}
+              style={{
+                width: "100%",
+                padding: "0.75rem 1.5rem",
+                backgroundColor: isLoading ? "#9ca3af" : "#10b981",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "1rem",
+                fontWeight: "500",
+                cursor: isLoading ? "not-allowed" : "pointer",
+                transition: "background-color 0.2s",
+              }}
+            >
+              Create Campaign
             </button>
 
             {/* Audience Count Display - Only show when DSP is TRUE */}

@@ -208,6 +208,28 @@ export const buildAudience = async (filterData) => {
 };
 
 // ========================================
+// CAMPAIGN CREATION OPERATION
+// ========================================
+
+// Create Campaign - creates Facebook campaign
+export const createCampaign = async (campaignData) => {
+  try {
+    const response = await apiClient.post("/create_campaign", campaignData);
+    return {
+      success: true,
+      data: response.data,
+      message: "Campaign created successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.error || "Failed to create campaign",
+      status: error.response?.status,
+    };
+  }
+};
+
+// ========================================
 // PROTECTED ROUTE
 // ========================================
 
