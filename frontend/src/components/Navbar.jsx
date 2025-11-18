@@ -200,7 +200,7 @@ const Navbar = ({ setLoginUser, inProgressFlag, setIsAuthenticated }) => {
                 fontWeight: 600,
               }}
             >
-              {userData.initials || "U"}
+              {(userData.initials?.[0] || "U").toUpperCase()}
             </Avatar>
             <ArrowDropDownIcon
               sx={{

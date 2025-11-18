@@ -544,7 +544,7 @@ const UserManagement = ({ setIsAuthenticated }) => {
               SelectProps={{ native: true }}
             >
               <option value="User">User</option>
-              <option value="Manager">Manager</option>
+              {/* <option value="Manager">Manager</option> */}
               <option value="Admin">Admin</option>
             </TextField>
           </Box>
