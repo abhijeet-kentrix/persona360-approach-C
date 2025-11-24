@@ -128,6 +128,12 @@ def create_user(current_user_id, current_username, current_role, company_name, d
             RETURNING id, first_name, last_name, company_name, username, role, status, dsp, created_date
             """
 
+            # Determine DSP value: Admin inherits their own DSP flag, SuperAdmin can specify
+            if current_role == 'Admin':
+                target_dsp = dsp  # Inherit from creating admin
+            else:
+                target_dsp = data.get('dsp', False)  # SuperAdmin can specify
+
             cursor.execute(insert_query, (
                 data['firstName'],
                 data['lastName'],
@@ -136,7 +142,7 @@ def create_user(current_user_id, current_username, current_role, company_name, d
                 hashed_password,
                 data['role'],
                 data.get('status', True),
-                data.get('dsp', False),
+                target_dsp,
                 current_user_id
             ))
 
